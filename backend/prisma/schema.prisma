@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  instagramAccounts InstagramAccount[]
+
+  @@map("users")
+}
+
+model InstagramAccount {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  instagramUserId    String   @map("instagram_user_id")
+  businessAccountId  String   @map("business_account_id")
+  accessToken        String   @map("access_token")
+  tokenExpiresAt     DateTime @map("token_expires_at")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, instagramUserId])
+  @@map("instagram_accounts")
+}

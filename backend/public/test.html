@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfluenceHub API Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; padding: 24px; }
+    h1 { text-align: center; margin-bottom: 8px; color: #fff; font-size: 24px; }
+    .subtitle { text-align: center; color: #888; margin-bottom: 32px; font-size: 14px; }
+    .container { max-width: 720px; margin: 0 auto; }
+    .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .card h2 { font-size: 16px; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .card h2 .badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-post { background: #2d4a22; color: #7ec95e; }
+    .badge-get { background: #1e3a5f; color: #5b9bd5; }
+    .badge-save { background: #4a3a22; color: #d4a54e; }
+    label { display: block; font-size: 13px; color: #aaa; margin-bottom: 4px; }
+    input, select, textarea { width: 100%; padding: 10px 12px; background: #111; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; margin-bottom: 12px; outline: none; font-family: inherit; }
+    input:focus, select:focus, textarea:focus { border-color: #555; }
+    textarea { resize: vertical; min-height: 60px; }
+    .row { display: flex; gap: 12px; }
+    .row > div { flex: 1; }
+    button { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    button:hover { opacity: 0.85; }
+    .btn-save { background: #d4a54e; color: #000; }
+    .btn-post { background: #7ec95e; color: #000; }
+    .btn-get { background: #5b9bd5; color: #000; }
+    .btn-auth { background: #c084fc; color: #000; }
+    .response { margin-top: 16px; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 16px; display: none; }
+    .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .status { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .status-ok { background: #2d4a22; color: #7ec95e; }
+    .status-err { background: #4a2222; color: #e05555; }
+    .status-warn { background: #4a3a22; color: #d4a54e; }
+    pre { font-size: 13px; color: #ccc; overflow-x: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.5; }
+    .divider { border: none; border-top: 1px solid #2a2a2a; margin: 24px 0; }
+    .info { font-size: 12px; color: #666; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>InfluenceHub API Test</h1>
+    <p class="subtitle">Instagram Graph API endpoint'lerini test et</p>
+
+    <!-- Credentials -->
+    <div class="card">
+      <h2><span class="badge badge-save">KAYIT</span> Instagram Hesap Bilgileri</h2>
+      <p class="info" style="margin-bottom:16px">Token ve Account ID'yi kaydet. Bu bilgiler veritabanına test kullanıcısı olarak kaydedilir.</p>
+      <label>Access Token</label>
+      <textarea id="accessToken" placeholder="Graph API Explorer'dan aldığın token"></textarea>
+      <label>Business Account ID</label>
+      <input type="text" id="businessAccountId" placeholder="17841400...">
+      <button class="btn-save" onclick="saveCredentials()">Kaydet</button>
+      <div class="response" id="saveResponse"></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Publish -->
+    <div class="card">
+      <h2><span class="badge badge-post">POST</span> /api/instagram/publish</h2>
+      <div class="row">
+        <div>
+          <label>Media Type</label>
+          <select id="mediaType">
+            <option value="IMAGE">IMAGE</option>
+            <option value="VIDEO">VIDEO</option>
+            <option value="REELS">REELS</option>
+          </select>
+        </div>
+        <div>
+          <label>Media URL</label>
+          <input type="text" id="mediaUrl" placeholder="https://picsum.photos/id/237/1080/1080">
+        </div>
+      </div>
+      <label>Caption</label>
+      <input type="text" id="caption" placeholder="Test paylaşımı #influencehub">
+      <button class="btn-post" onclick="publishMedia()">Paylaş</button>
+      <div class="response" id="publishResponse"></div>
+    </div>
+
+    <!-- Status -->
+    <div class="card">
+      <h2><span class="badge badge-get">GET</span> /api/instagram/status/:mediaId</h2>
+      <label>Media ID</label>
+      <input type="text" id="mediaId" placeholder="Publish sonucundan dönen mediaId">
+      <button class="btn-get" onclick="getStatus()">Durumu Sorgula</button>
+      <div class="response" id="statusResponse"></div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="card">
+      <h2><span class="badge badge-get">GET</span> /api/auth/instagram/account/:userId</h2>
+      <label>User ID</label>
+      <input type="text" id="accountUserId" value="test-user-1">
+      <button class="btn-auth" onclick="getAccount()">Hesap Bilgisi</button>
+      <div class="response" id="accountResponse"></div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    const USER_ID = 'test-user-1';
+
+    function showResponse(elementId, status, data) {
+      const el = document.getElementById(elementId);
+      el.style.display = 'block';
+      const statusClass = status < 300 ? 'status-ok' : status < 500 ? 'status-warn' : 'status-err';
+      el.innerHTML = `
+        <div class="response-header">
+          <span>Yanıt</span>
+          <span class="status ${statusClass}">${status}</span>
+        </div>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    }
+
+    async function saveCredentials() {
+      const accessToken = document.getElementById('accessToken').value.trim();
+      const businessAccountId = document.getElementById('businessAccountId').value.trim();
+      if (!accessToken || !businessAccountId) {
+        showResponse('saveResponse', 400, { error: 'Token ve Account ID gerekli' });
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/api/test/save-credentials`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: USER_ID, accessToken, businessAccountId })
+        });
+        const data = await res.json();
+        showResponse('saveResponse', res.status, data);
+      } catch (err) {
+        showResponse('saveResponse', 0, { error: err.message });
+      }
+    }
+
+    async function publishMedia() {
+      const mediaType = document.getElementById('mediaType').value;
+      const mediaUrl = document.getElementById('mediaUrl').value.trim();
+      const caption = document.getElementById('caption').value.trim();
+      if (!mediaUrl) {
+        showResponse('publishResponse', 400, { error: 'Media URL gerekli' });
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/api/instagram/publish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-user-id': USER_ID },
+          body: JSON.stringify({ mediaType, mediaUrl, caption })
+        });
+        const data = await res.json();
+        showResponse('publishResponse', res.status, data);
+        if (data.data?.mediaId) {
+          document.getElementById('mediaId').value = data.data.mediaId;
+        }
+      } catch (err) {
+        showResponse('publishResponse', 0, { error: err.message });
+      }
+    }
+
+    async function getStatus() {
+      const mediaId = document.getElementById('mediaId').value.trim();
+      if (!mediaId) {
+        showResponse('statusResponse', 400, { error: 'Media ID gerekli' });
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/api/instagram/status/${mediaId}`, {
+          headers: { 'x-user-id': USER_ID }
+        });
+        const data = await res.json();
+        showResponse('statusResponse', res.status, data);
+      } catch (err) {
+        showResponse('statusResponse', 0, { error: err.message });
+      }
+    }
+
+    async function getAccount() {
+      const userId = document.getElementById('accountUserId').value.trim();
+      try {
+        const res = await fetch(`${API}/api/auth/instagram/account/${userId}`);
+        const data = await res.json();
+        showResponse('accountResponse', res.status, data);
+      } catch (err) {
+        showResponse('accountResponse', 0, { error: err.message });
+      }
+    }
+  </script>
+</body>
+</html>
