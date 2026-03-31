@@ -20,7 +20,7 @@
     "noAccount": "Hesabınız yok mu?",
     "hasAccount": "Zaten hesabınız var mı?",
     "emailPlaceholder": "ornek@email.com",
-    "demoHint": "Demo: e-posta serbest; şifre en az 8 karakter.",
+    "demoHint": "Yerel admin: e-posta ve şifre «admin» — API çağrısı olmadan giriş.",
     "loggingIn": "Giriş yapılıyor…",
     "registering": "Hesap oluşturuluyor…",
     "error": "Bir hata oluştu",

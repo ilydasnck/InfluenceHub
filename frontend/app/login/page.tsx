@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthCard } from "@/components/auth/AuthCard";
-import { getApiBase, setStoredToken } from "@/lib/api";
+import { getApiBase, setStoredToken, LOCAL_ADMIN_TOKEN } from "@/lib/api";
 import { useI18n } from "@/lib/i18n/context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -53,9 +53,9 @@ export default function LoginPage() {
             {t("auth.email")}
           </label>
           <input
-            type="email"
+            type="text"
             required
-            autoComplete="email"
+            autoComplete="username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.emailPlaceholder")}
@@ -69,7 +69,7 @@ export default function LoginPage() {
           <input
             type="password"
             required
-            minLength={8}
+            minLength={1}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

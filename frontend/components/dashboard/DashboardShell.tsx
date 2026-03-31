@@ -2,7 +2,7 @@
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { getStoredToken, setStoredToken } from "@/lib/api";
+import { getStoredToken, isLocalAdminToken, setStoredToken } from "@/lib/api";
 import { useI18n } from "@/lib/i18n/context";
 import {
   BarChart3,
@@ -37,8 +37,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getStoredToken()) {
+    const token = getStoredToken();
+    if (!token) {
       router.replace("/login");
+      return;
+    }
+    if (isLocalAdminToken(token)) {
+      setEmail("admin");
       return;
     }
     try {

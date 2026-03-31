@@ -16,6 +16,16 @@ export function getApiBase(): string {
 
 const TOKEN_KEY = "influencehub_token";
 
+/** Backend `verifyAuthToken` ile aynı olmalı; girişte API çağrısı yapılmadan kullanılır */
+export const LOCAL_ADMIN_TOKEN =
+  typeof process !== "undefined" && process.env.NEXT_PUBLIC_LOCAL_ADMIN_TOKEN
+    ? process.env.NEXT_PUBLIC_LOCAL_ADMIN_TOKEN
+    : "influencehub_local_admin_dev";
+
+export function isLocalAdminToken(token: string | null | undefined): boolean {
+  return token === LOCAL_ADMIN_TOKEN;
+}
+
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") {
     return null;
