@@ -1,0 +1,130 @@
+{
+  "common": {
+    "language": "Dil",
+    "english": "İngilizce",
+    "turkish": "Türkçe",
+    "switchToDark": "Karanlık moda geç",
+    "switchToLight": "Aydınlık moda geç"
+  },
+  "auth": {
+    "brand": "InfluenceHub",
+    "tagline": "İçerik Yöneticisi",
+    "loginSubtitle": "Sosyal medya içeriğinizi yönetmek için giriş yapın",
+    "registerSubtitle": "Başlamak için hesap oluşturun",
+    "email": "E-posta",
+    "password": "Şifre",
+    "name": "Ad",
+    "nameOptional": "Ad (isteğe bağlı)",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "noAccount": "Hesabınız yok mu?",
+    "hasAccount": "Zaten hesabınız var mı?",
+    "emailPlaceholder": "ornek@email.com",
+    "demoHint": "Demo: e-posta serbest; şifre en az 8 karakter.",
+    "loggingIn": "Giriş yapılıyor…",
+    "registering": "Hesap oluşturuluyor…",
+    "error": "Bir hata oluştu",
+    "networkError": "Ağ hatası — API çalışıyor mu?"
+  },
+  "dashboard": {
+    "welcome": "Tekrar hoş geldiniz!",
+    "title": "Panel",
+    "subtitle": "İçerik performansınıza genel bakış",
+    "nav": {
+      "dashboard": "Panel",
+      "accounts": "Hesaplar",
+      "createPost": "Gönderi Oluştur",
+      "calendar": "Takvim",
+      "analytics": "Analitik",
+      "aiAssistant": "Yapay Zeka Asistanı",
+      "settings": "Ayarlar"
+    },
+    "stats": {
+      "connectedAccounts": "Bağlı Hesaplar",
+      "connectedAccountsHint": "Tüm platformlar",
+      "publishedPosts": "Yayınlanan Gönderiler",
+      "publishedPostsHint": "Toplam yayın",
+      "scheduledPosts": "Zamanlanmış Gönderiler",
+      "scheduledPostsHint": "Yaklaşan gönderiler",
+      "avgEngagement": "Ort. Etkileşim",
+      "avgEngagementHint": "Gönderi başına"
+    },
+    "charts": {
+      "recentEngagement": "Son Gönderi Etkileşimi",
+      "aiTimes": "Yapay Zeka Önerilen Paylaşım Saatleri",
+      "sampleTime": "En iyi saat: Pazartesi 08:00",
+      "sampleDesc": "Kitlenize göre daha fazla erişim beklenebilir.",
+      "samplePct": "%60"
+    },
+    "role": "İçerik Üreticisi",
+    "logout": "Çıkış",
+    "notifications": "Bildirimler"
+  },
+  "accounts": {
+    "title": "Sosyal Hesaplar",
+    "subtitle": "Bağlı sosyal medya hesaplarınızı yönetin",
+    "connect": "Hesap Bağla",
+    "refresh": "Yenile",
+    "refreshing": "Güncelleniyor…",
+    "loading": "Hesaplar yükleniyor…",
+    "empty": "Henüz bağlı hesap yok.",
+    "loadError": "Hesaplar yüklenemedi.",
+    "connectError": "Bağlantı başlatılamadı.",
+    "deleteError": "Hesap kaldırılamadı.",
+    "removeConfirm": "Bu hesabın bağlantısını kaldırmak istiyor musunuz?",
+    "followers": "takipçi",
+    "connected": "Bağlı",
+    "remove": "Hesabı kaldır",
+    "modalTitle": "Platform seçin",
+    "modalClose": "Kapat",
+    "accountCountOne": "{count} hesap bağlı",
+    "accountCountMany": "{count} hesap bağlı",
+    "weeklyChange": "Son ~7 güne göre takipçi değişimi (geçmiş kaydı varsa)",
+    "recentChange": "Son yenilemeden bu yana takipçi değişimi",
+    "growth": {
+      "title": "Takipçi artışı",
+      "subtitle": "Son 7 ve 30 gündeki net takipçi değişimi, hesaplarınıza göre dağılım ve haftalık trend özeti.",
+      "net7": "Net değişim (son 7 gün, tüm hesaplar)",
+      "net30": "Net değişim (son 30 gün, tüm hesaplar)",
+      "noData": "Henüz yeterli geçmiş yok — birkaç gün sonra tekrar bakın.",
+      "distributionTitle": "Takipçilerinizin dağılımı (hesaba göre pay)",
+      "chartNetTitle": "Dönemsel net takipçi (tüm hesaplar)",
+      "chartShareTitle": "Pay dağılımı (donut)",
+      "chartLineTitle": "Toplam takipçi eğrisi",
+      "chartLineHint": "Son 30 gün (UTC), günlük kayıtlara göre tüm hesapların toplamı.",
+      "tableTitle": "Hesap bazlı detay",
+      "colAccount": "Hesap",
+      "colPlatform": "Platform",
+      "colFollowers": "Takipçi",
+      "colShare": "Pay %",
+      "colWeekly": "Haftalık Δ",
+      "period7Short": "7 gün",
+      "period30Short": "30 gün",
+      "tooltipFollowers": "takipçi",
+      "tooltipShare": "Toplam içindeki pay",
+      "sortBy": "Sütun başlığına tıklayarak sıralayın",
+      "platformFallback": "Diğer"
+    },
+    "stats": {
+      "totalAccounts": "Toplam Hesap",
+      "totalFollowers": "Toplam Takipçi",
+      "platforms": "Platform"
+    },
+    "group": {
+      "instagram": "Instagram Hesapları",
+      "facebook": "Facebook Hesapları",
+      "youtube": "YouTube Hesapları",
+      "tiktok": "TikTok Hesapları"
+    },
+    "platform": {
+      "instagram": "Instagram",
+      "instagramSub": "Meta / Facebook ile giriş",
+      "facebook": "Facebook",
+      "facebookSub": "Sayfa veya profil",
+      "youtube": "YouTube",
+      "youtubeSub": "Kanal",
+      "tiktok": "TikTok",
+      "tiktokSub": "İçerik üreticisi hesabı"
+    }
+  }
+}
