@@ -44,4 +44,12 @@ postsRouter.get("/scheduled", (req, res) => {
   void controller.scheduled(req, res);
 });
 
+postsRouter.patch("/:id/scheduled", (req, res) => {
+  void controller.updateScheduled(req, res);
+});
+
+postsRouter.delete("/:id", (req, res) => {
+  void controller.remove(req, res);
+});
+
 export { postsRouter };

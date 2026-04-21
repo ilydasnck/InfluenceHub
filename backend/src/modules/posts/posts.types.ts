@@ -29,6 +29,14 @@ export type ScheduleInput = PublishNowInput & {
   scheduledAt: string;
 };
 
+export type UpdateScheduledInput = {
+  title?: string;
+  caption: string;
+  hashtags?: string;
+  scheduledAt: string;
+  targets: PostCreateTargetInput[];
+};
+
 export type PostTargetResult = {
   id: string;
   kind: AccountKind;

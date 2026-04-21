@@ -200,7 +200,20 @@
     "loading": "Loading scheduled posts...",
     "empty": "No scheduled posts yet.",
     "when": "Scheduled time",
-    "accounts": "Target accounts"
+    "accounts": "Target accounts",
+    "detailTitle": "Plan Details",
+    "save": "Update",
+    "delete": "Delete",
+    "updated": "Scheduled post updated.",
+    "deleted": "Scheduled post deleted.",
+    "updateError": "Update failed.",
+    "deleteError": "Delete failed.",
+    "viewAll": "View all",
+    "showLess": "Show less",
+    "sections": {
+      "planned": "Scheduled Posts",
+      "history": "Planned and Published"
+    }
   }
 }
 

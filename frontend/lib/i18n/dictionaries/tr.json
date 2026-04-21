@@ -200,6 +200,19 @@
     "loading": "Planli gonderiler yukleniyor...",
     "empty": "Henuz planli gonderi yok.",
     "when": "Planlanan zaman",
-    "accounts": "Hedef hesaplar"
+    "accounts": "Hedef hesaplar",
+    "detailTitle": "Plan Detayi",
+    "save": "Guncelle",
+    "delete": "Sil",
+    "updated": "Planli gonderi guncellendi.",
+    "deleted": "Planli gonderi silindi.",
+    "updateError": "Guncelleme yapilamadi.",
+    "deleteError": "Silme islemi basarisiz.",
+    "viewAll": "Tumunu goruntule",
+    "showLess": "Daha az goster",
+    "sections": {
+      "planned": "Planlanan Gonderiler",
+      "history": "Planlanmis ve Paylasilmis"
+    }
   }
 }

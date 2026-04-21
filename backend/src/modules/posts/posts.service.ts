@@ -8,6 +8,7 @@ import {
   PostTargetResult,
   PublishNowInput,
   ScheduleInput,
+  UpdateScheduledInput,
 } from "./posts.types";
 import crypto from "crypto";
 import { createInstagramRepository } from "../instagram/instagram.repository";
@@ -321,6 +322,72 @@ export const createPostsService = (db: PrismaClient) => ({
       scheduledAt: post.scheduled_at?.toISOString() ?? null,
       message: "Gonderi planlandi.",
     });
+  },
+
+  async updateScheduled(userId: string, postId: string, input: UpdateScheduledInput) {
+    const existing = await db.$queryRawUnsafe<PostRow[]>(
+      `SELECT id, user_id, title, caption, hashtags, media_type, media_url, status::text as status, created_at, scheduled_at, published_at
+       FROM posts
+       WHERE id = $1 AND user_id = $2
+       LIMIT 1`,
+      postId,
+      userId,
+    );
+    const post = existing[0];
+    if (!post) {
+      return Result.fail<ServiceError>({ message: "Gonderi bulunamadi.", code: 404 });
+    }
+    if (post.status !== "SCHEDULED") {
+      return Result.fail<ServiceError>({ message: "Sadece planli gonderiler guncellenebilir.", code: 400 });
+    }
+    const resolved = await this.resolveTargets(userId, input.targets);
+    if (!resolved.ok) return resolved;
+    const targets = resolved.value;
+    if (targets.length === 0) {
+      return Result.fail<ServiceError>({ message: "Gecerli hedef hesap bulunamadi.", code: 400 });
+    }
+
+    await db.$executeRawUnsafe(
+      `UPDATE posts
+       SET title = $1, caption = $2, hashtags = $3, scheduled_at = $4, updated_at = NOW()
+       WHERE id = $5`,
+      normalizeText(input.title) || null,
+      normalizeText(input.caption),
+      normalizeText(input.hashtags) || null,
+      new Date(input.scheduledAt),
+      postId,
+    );
+    await db.$executeRawUnsafe(`DELETE FROM post_targets WHERE post_id = $1`, postId);
+    for (const t of targets) {
+      await db.$executeRawUnsafe(
+        `INSERT INTO post_targets (
+          id, post_id, account_kind, account_ref_id, platform, account_label, status, created_at, updated_at
+         ) VALUES (
+          $1, $2, $3, $4, $5, $6, 'SCHEDULED'::"PostTargetStatus", NOW(), NOW()
+         )`,
+        crypto.randomUUID(),
+        postId,
+        t.kind,
+        t.accountId,
+        t.platform,
+        t.accountLabel,
+      );
+    }
+
+    return Result.ok({ id: postId, message: "Planli gonderi guncellendi." });
+  },
+
+  async deletePost(userId: string, postId: string) {
+    const deleted = await db.$executeRawUnsafe(
+      `DELETE FROM posts
+       WHERE id = $1 AND user_id = $2`,
+      postId,
+      userId,
+    );
+    if (!deleted) {
+      return Result.fail<ServiceError>({ message: "Gonderi bulunamadi.", code: 404 });
+    }
+    return Result.ok({ id: postId, message: "Gonderi silindi." });
   },
 
   async listHistory(userId: string) {

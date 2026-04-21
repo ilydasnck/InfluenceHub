@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { verifyAuthToken } from "../../shared/jwt";
 import { PostsService } from "./posts.service";
-import { PublishNowInput, ScheduleInput } from "./posts.types";
+import { PublishNowInput, ScheduleInput, UpdateScheduledInput } from "./posts.types";
 import path from "path";
 import crypto from "crypto";
 import { mkdir, writeFile } from "fs/promises";
@@ -384,5 +384,67 @@ export const createPostsController = (service: PostsService) => ({
     }
     const result = await service.listScheduled(userId);
     res.json({ data: result.ok ? result.value : [] });
+  },
+
+  async updateScheduled(req: Request, res: Response): Promise<void> {
+    const userId = getUserId(req);
+    if (!userId) {
+      res.status(401).json({ error: "Yetkisiz" });
+      return;
+    }
+    const postId = String(req.params.id ?? "");
+    if (!postId) {
+      res.status(400).json({ error: "Gonderi id zorunludur." });
+      return;
+    }
+    const body = req.body as Partial<UpdateScheduledInput>;
+    const payload: UpdateScheduledInput = {
+      title: body.title,
+      caption: String(body.caption ?? ""),
+      hashtags: body.hashtags,
+      scheduledAt: String(body.scheduledAt ?? ""),
+      targets: normalizeTargets(body.targets),
+    };
+    if (!hasContent(payload)) {
+      res.status(400).json({ error: "Icerik bos olamaz." });
+      return;
+    }
+    if (!payload.scheduledAt || Number.isNaN(new Date(payload.scheduledAt).getTime())) {
+      res.status(400).json({ error: "Gecerli tarih/saat giriniz." });
+      return;
+    }
+    if (new Date(payload.scheduledAt).getTime() <= Date.now()) {
+      res.status(400).json({ error: "Planlama tarihi gelecekte olmali." });
+      return;
+    }
+    if (payload.targets.length < 1) {
+      res.status(400).json({ error: "En az bir hesap secmelisiniz." });
+      return;
+    }
+    const result = await service.updateScheduled(userId, postId, payload);
+    if (!result.ok) {
+      res.status(result.error.code).json({ error: result.error.message });
+      return;
+    }
+    res.json({ data: result.value });
+  },
+
+  async remove(req: Request, res: Response): Promise<void> {
+    const userId = getUserId(req);
+    if (!userId) {
+      res.status(401).json({ error: "Yetkisiz" });
+      return;
+    }
+    const postId = String(req.params.id ?? "");
+    if (!postId) {
+      res.status(400).json({ error: "Gonderi id zorunludur." });
+      return;
+    }
+    const result = await service.deletePost(userId, postId);
+    if (!result.ok) {
+      res.status(result.error.code).json({ error: result.error.message });
+      return;
+    }
+    res.json({ data: result.value });
   },
 });
