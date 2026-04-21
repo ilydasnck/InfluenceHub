@@ -19,7 +19,25 @@ interface PublishMediaResult {
 const validatePublishParams = (
   params: PublishMediaParams,
 ): Result<PublishMediaParams, InstagramApiError> => {
-  if (!params.mediaUrl || !URL_PATTERN.test(params.mediaUrl)) {
+  if (params.mediaType === "CAROUSEL") {
+    if (!params.mediaUrls || params.mediaUrls.length < 2) {
+      return Result.fail({
+        message: "Carousel icin en az iki mediaUrl gereklidir",
+        type: "ValidationError",
+        code: 400,
+        isRateLimit: false,
+      });
+    }
+    const invalid = params.mediaUrls.find((u) => !URL_PATTERN.test(u));
+    if (invalid) {
+      return Result.fail({
+        message: "Carousel mediaUrl listesinde gecersiz URL var",
+        type: "ValidationError",
+        code: 400,
+        isRateLimit: false,
+      });
+    }
+  } else if (!params.mediaUrl || !URL_PATTERN.test(params.mediaUrl)) {
     return Result.fail({
       message: "Geçerli bir mediaUrl (http/https) gereklidir",
       type: "ValidationError",
@@ -49,6 +67,47 @@ const handleRateLimitError = (error: InstagramApiError): InstagramApiError =>
       }
     : error;
 
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+const waitUntilContainerReady = async (
+  repository: InstagramRepository,
+  config: InstagramConfig,
+  containerId: string,
+): Promise<Result<true, InstagramApiError>> => {
+  const maxAttempts = 8;
+  const waitMs = 1500;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const status = await repository.fetchMediaStatus(config, containerId);
+    if (!status.ok) {
+      // Container status endpoint geçici olarak hata dönerse, akışı hemen kesme.
+      await sleep(waitMs);
+      continue;
+    }
+
+    const candidate = status.value as { status_code?: string };
+    const code = candidate.status_code;
+    if (code === "FINISHED") return Result.ok(true);
+    if (code === "ERROR" || code === "EXPIRED") {
+      return Result.fail({
+        message: `Instagram medya hazirlama basarisiz: ${code}`,
+        type: "ContainerNotReady",
+        code: 400,
+        isRateLimit: false,
+      });
+    }
+
+    await sleep(waitMs);
+  }
+
+  return Result.fail({
+    message: "Instagram medya hazirlama zaman asimina ugradi. Lutfen tekrar deneyin.",
+    type: "ContainerNotReady",
+    code: 400,
+    isRateLimit: false,
+  });
+};
+
 export const createInstagramService = (repository: InstagramRepository) => ({
   async publishMedia(
     config: InstagramConfig,
@@ -62,21 +121,60 @@ export const createInstagramService = (repository: InstagramRepository) => ({
       "InstagramService",
     );
 
-    const containerResult = await repository.createMediaContainer(
-      config,
-      params,
-    );
-    if (!containerResult.ok) {
-      logger.error(
-        "Container oluşturulamadı",
-        "InstagramService",
-        containerResult.error,
+    let containerId = "";
+    if (params.mediaType === "CAROUSEL" && params.mediaUrls && params.mediaUrls.length > 1) {
+      const childIds: string[] = [];
+      for (const mediaUrl of params.mediaUrls) {
+        const isVideo = mediaUrl.toLowerCase().endsWith(".mp4") || mediaUrl.toLowerCase().endsWith(".mov");
+        const childResult = await repository.createMediaContainer(config, {
+          mediaType: isVideo ? "VIDEO" : "IMAGE",
+          mediaUrl,
+          isCarouselItem: true,
+        });
+        if (!childResult.ok) {
+          logger.error("Carousel child container oluşturulamadı", "InstagramService", childResult.error);
+          return Result.fail(handleRateLimitError(childResult.error));
+        }
+        const childReady = await waitUntilContainerReady(repository, config, childResult.value);
+        if (!childReady.ok) return childReady;
+        childIds.push(childResult.value);
+      }
+      const carouselResult = await repository.createMediaContainer(config, {
+        mediaType: "CAROUSEL",
+        mediaUrls: childIds,
+        caption: params.caption,
+      });
+      if (!carouselResult.ok) {
+        logger.error("Carousel container oluşturulamadı", "InstagramService", carouselResult.error);
+        return Result.fail(handleRateLimitError(carouselResult.error));
+      }
+      containerId = carouselResult.value;
+    } else {
+      const containerResult = await repository.createMediaContainer(
+        config,
+        params,
       );
-      return Result.fail(handleRateLimitError(containerResult.error));
+      if (!containerResult.ok) {
+        logger.error(
+          "Container oluşturulamadı",
+          "InstagramService",
+          containerResult.error,
+        );
+        return Result.fail(handleRateLimitError(containerResult.error));
+      }
+      containerId = containerResult.value;
     }
-
-    const containerId = containerResult.value;
     logger.info(`Container oluşturuldu: ${containerId}`, "InstagramService");
+
+    const readyResult = await waitUntilContainerReady(repository, config, containerId);
+    if (!readyResult.ok) {
+      logger.error(
+        "Container hazir degil",
+        "InstagramService",
+        readyResult.error,
+      );
+      return readyResult;
+    }
 
     const publishResult = await repository.publishMediaContainer(
       config,

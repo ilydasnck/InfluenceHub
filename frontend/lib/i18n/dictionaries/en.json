@@ -126,5 +126,81 @@
       "tiktok": "TikTok",
       "tiktokSub": "Creator account"
     }
+  },
+  "create": {
+    "title": "Create Post",
+    "subtitle": "Publish now or schedule your content to connected accounts.",
+    "loadingAccounts": "Loading accounts...",
+    "emptyAccounts": "No connected account found",
+    "emptyAccountsSub": "Connect at least one social account before posting.",
+    "goAccounts": "Go to Accounts",
+    "sections": {
+      "details": "Post Details",
+      "detailsSub": "Prepare your post content",
+      "media": "Media",
+      "mediaSub": "Select photo or video for Instagram",
+      "accounts": "Select Accounts",
+      "accountsSub": "Choose where to publish",
+      "actions": "Actions",
+      "schedule": "Schedule",
+      "scheduleSub": "Set a future publish date",
+      "history": "History"
+    },
+    "fields": {
+      "title": "Title",
+      "caption": "Caption",
+      "hashtags": "Hashtags",
+      "date": "Date",
+      "time": "Time",
+      "titlePlaceholder": "Give your post a title",
+      "captionPlaceholder": "Write your caption here...",
+      "hashtagsPlaceholder": "#social #marketing"
+    },
+    "actions": {
+      "publishNow": "Publish Now",
+      "schedule": "Schedule Post"
+    },
+    "media": {
+      "select": "Select Photo/Video",
+      "remove": "Remove",
+      "hint": "Media is required for Instagram publishing."
+    },
+    "errors": {
+      "contentRequired": "Enter at least a title or caption.",
+      "accountRequired": "Select at least one account.",
+      "mediaRequiredInstagram": "Photo or video is required when Instagram is selected.",
+      "mediaUrlRequiredInstagram": "Public media URL is required when Instagram is selected.",
+      "mediaType": "Only image or video files are allowed.",
+      "scheduleRequired": "Date and time are required for scheduling.",
+      "scheduleFuture": "Schedule date/time must be in the future."
+    },
+    "feedback": {
+      "published": "Post published successfully.",
+      "scheduled": "Post scheduled successfully.",
+      "error": "Operation failed.",
+      "network": "Network error. Please try again.",
+      "tooLarge": "Selected media file is too large. Please try a smaller file."
+    },
+    "history": {
+      "empty": "No post history yet.",
+      "when": "When",
+      "accounts": "Accounts"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "processing": "Processing",
+      "success": "Successful",
+      "failed": "Failed",
+      "partial": "Partial"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "subtitle": "Track your scheduled posts",
+    "loading": "Loading scheduled posts...",
+    "empty": "No scheduled posts yet.",
+    "when": "Scheduled time",
+    "accounts": "Target accounts"
   }
 }
+

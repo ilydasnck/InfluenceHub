@@ -7,7 +7,9 @@ export interface InstagramConfig {
 
 export interface PublishMediaParams {
   readonly mediaType: MediaType;
-  readonly mediaUrl: string;
+  readonly mediaUrl?: string;
+  readonly mediaUrls?: string[];
+  readonly isCarouselItem?: boolean;
   readonly caption?: string;
 }
 

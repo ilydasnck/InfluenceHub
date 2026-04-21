@@ -19,8 +19,23 @@ model User {
   facebookPageAccounts FacebookPageAccount[]
   socialConnections    SocialConnection[]
   followerSnapshots    FollowerSnapshot[]
+  posts                Post[]
 
   @@map("users")
+}
+
+enum PostStatus {
+  SCHEDULED
+  PROCESSING
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+enum PostTargetStatus {
+  SCHEDULED
+  SUCCESS
+  FAILED
 }
 
 /// Günlük takipçi sayısı — haftalık/aylık değişim hesabı için
@@ -98,4 +113,46 @@ model InstagramAccount {
 
   @@unique([userId, instagramUserId])
   @@map("instagram_accounts")
+}
+
+model Post {
+  id          String     @id @default(uuid())
+  userId      String     @map("user_id")
+  title       String?
+  caption     String
+  hashtags    String?
+  mediaType   String?    @map("media_type")
+  mediaUrl    String?    @map("media_url")
+  scheduledAt DateTime?  @map("scheduled_at")
+  publishedAt DateTime?  @map("published_at")
+  status      PostStatus @default(SCHEDULED)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targets PostTarget[]
+
+  @@index([userId, status, createdAt])
+  @@map("posts")
+}
+
+model PostTarget {
+  id            String           @id @default(uuid())
+  postId        String           @map("post_id")
+  accountKind   String           @map("account_kind")
+  accountRefId  String           @map("account_ref_id")
+  platform      String
+  accountLabel  String?          @map("account_label")
+  status        PostTargetStatus @default(SCHEDULED)
+  errorMessage  String?          @map("error_message")
+  externalPostId String?         @map("external_post_id")
+  publishedAt   DateTime?        @map("published_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([accountKind, accountRefId])
+  @@map("post_targets")
 }

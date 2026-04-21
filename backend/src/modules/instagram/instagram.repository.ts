@@ -47,6 +47,16 @@ const buildMediaParams = (params: PublishMediaParams): Record<string, string> =>
     base.caption = params.caption;
   }
 
+  if (params.isCarouselItem) {
+    base.is_carousel_item = "true";
+  }
+
+  if (params.mediaType === "CAROUSEL") {
+    base.children = (params.mediaUrls ?? []).join(",");
+    return base;
+  }
+
+  if (!params.mediaUrl) return base;
   if (params.mediaType === "VIDEO" || params.mediaType === "REELS") {
     base.video_url = params.mediaUrl;
   } else {

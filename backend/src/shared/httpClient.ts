@@ -38,7 +38,11 @@ export const createHttpClient = (baseURL: string, timeout = 15_000): HttpClient 
       logger.error(
         `Request failed: ${error.message}`,
         "HttpClient",
-        { status: error.response?.status, url: error.config?.url },
+        {
+          status: error.response?.status,
+          url: error.config?.url,
+          data: error.response?.data,
+        },
       );
       return Promise.reject(error);
     },
