@@ -1,0 +1,22 @@
+export const authStrings = {
+  brand: 'InfluenceHub',
+  tagline: 'İçerik Yöneticisi',
+  loginSubtitle: 'Sosyal medya içeriğinizi yönetmek için giriş yapın',
+  registerSubtitle: 'Başlamak için hesap oluşturun',
+  email: 'E-posta',
+  password: 'Şifre',
+  name: 'Ad',
+  nameOptional: 'Ad (isteğe bağlı)',
+  emailPlaceholder: 'ornek@email.com',
+  signIn: 'Giriş Yap',
+  signUp: 'Kayıt Ol',
+  loggingIn: 'Giriş yapılıyor...',
+  registering: 'Hesap oluşturuluyor...',
+  noAccount: 'Hesabınız yok mu?',
+  hasAccount: 'Zaten hesabın var mı?',
+  demoHint:
+    'Yerel admin: e-posta ve şifre admin — API çağrısı olmadan giriş.',
+  errorGeneric: 'Bir hata oluştu',
+  networkError: 'Ağ hatası — API çalışıyor mu?',
+  passwordMin: 'Şifre en az 8 karakter olmalı',
+};
